@@ -1,0 +1,11 @@
+services:
+  chatbot:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - FLASK_DEBUG=0
+    volumes:
+      # Persist conversation logs on the host across container restarts
+      - ./data:/app/data

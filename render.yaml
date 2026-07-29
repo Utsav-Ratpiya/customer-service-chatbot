@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: supportdesk-ai
+    env: python
+    buildCommand: "pip install -r requirements.txt && python src/train_model.py"
+    startCommand: "gunicorn --chdir src app:app --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: FLASK_DEBUG
+        value: "0"
+    plan: free

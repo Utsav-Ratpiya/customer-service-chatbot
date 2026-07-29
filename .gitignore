@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.egg-info/
+
+# Runtime-generated files
+data/conversation_logs.jsonl
+# NOTE: models/intent_classifier.joblib is intentionally tracked (not ignored)
+# so the app runs immediately after cloning without retraining.
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+
+# Env
+.env
