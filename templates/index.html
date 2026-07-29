@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SupportDesk AI — Customer Service Chatbot</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <aside class="side-panel">
+      <div class="brand">
+        <div class="brand-mark">SD</div>
+        <div>
+          <h1>SupportDesk<span>AI</span></h1>
+          <p class="tagline">Hybrid NLP + rule-based support assistant</p>
+        </div>
+      </div>
+
+      <div class="side-section">
+        <h2>Try asking about</h2>
+        <ul class="suggestion-list" id="suggestion-list">
+          <li data-msg="Where is my order ORD12345?">Order status</li>
+          <li data-msg="What is your return policy?">Return policy</li>
+          <li data-msg="My payment failed twice">Payment issue</li>
+          <li data-msg="How long does shipping take?">Shipping info</li>
+          <li data-msg="I want to cancel my order">Cancel an order</li>
+          <li data-msg="I want to talk to a human">Human agent</li>
+        </ul>
+      </div>
+
+      <div class="side-section status-block">
+        <h2>Session</h2>
+        <div class="status-row"><span>Status</span><strong id="status-dot">● Online</strong></div>
+        <div class="status-row"><span>Last intent</span><strong id="last-intent">—</strong></div>
+        <div class="status-row"><span>Confidence</span><strong id="last-confidence">—</strong></div>
+      </div>
+
+      <p class="footnote">Demo project · No real orders or payments are processed</p>
+    </aside>
+
+    <main class="chat-panel">
+      <header class="chat-header">
+        <div>
+          <h2>Customer Support Chat</h2>
+          <p>Ask about orders, returns, refunds, payments, or shipping</p>
+        </div>
+        <button id="reset-btn" class="reset-btn" title="Reset conversation">Reset chat</button>
+      </header>
+
+      <div class="chat-log" id="chat-log">
+        <div class="msg bot">
+          <div class="avatar">🤖</div>
+          <div class="bubble">
+            Hi! I'm your virtual support assistant. I can help with order tracking, returns,
+            refunds, payments, and shipping questions. What can I help you with today?
+          </div>
+        </div>
+      </div>
+
+      <div class="typing-indicator" id="typing-indicator" hidden>
+        <div class="avatar">🤖</div>
+        <div class="bubble dots"><span></span><span></span><span></span></div>
+      </div>
+
+      <form class="composer" id="composer" autocomplete="off">
+        <input type="text" id="user-input" placeholder="Type your message…" autocomplete="off" />
+        <button type="submit" id="send-btn">Send</button>
+      </form>
+    </main>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
