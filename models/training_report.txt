@@ -1,0 +1,27 @@
+Held-out accuracy: 0.83
+
+                precision    recall  f1-score   support
+
+  bot_identity       0.50      0.50      0.50         2
+business_hours       1.00      0.50      0.67         2
+  cancel_order       1.00      1.00      1.00         1
+     complaint       1.00      0.67      0.80         3
+  contact_info       0.67      1.00      0.80         2
+      feedback       0.00      0.00      0.00         1
+       goodbye       0.67      1.00      0.80         2
+      greeting       1.00      1.00      1.00         3
+   human_agent       0.67      1.00      0.80         2
+  order_status       0.67      1.00      0.80         2
+  out_of_stock       1.00      0.50      0.67         2
+ payment_issue       1.00      1.00      1.00         2
+ price_inquiry       0.67      1.00      0.80         2
+  product_info       1.00      1.00      1.00         2
+ refund_status       1.00      1.00      1.00         1
+ return_policy       1.00      1.00      1.00         2
+ shipping_info       1.00      0.50      0.67         2
+        thanks       1.00      1.00      1.00         2
+      warranty       1.00      1.00      1.00         1
+
+      accuracy                           0.83        36
+     macro avg       0.83      0.82      0.81        36
+  weighted avg       0.85      0.83      0.82        36
