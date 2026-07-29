@@ -1,0 +1,238 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "hi", "hello", "hey", "good morning", "good afternoon", "good evening",
+        "hey there", "is anyone there", "hi there", "howdy", "greetings",
+        "what's up", "yo", "hello there"
+      ],
+      "responses": [
+        "Hello! Welcome to our support center. How can I help you today?",
+        "Hi there! I'm your virtual assistant. What can I do for you?",
+        "Hey! Thanks for reaching out. How may I assist you today?"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "bye", "goodbye", "see you later", "see you", "talk to you later",
+        "i have to go", "that's all", "quit", "exit", "close chat", "end chat"
+      ],
+      "responses": [
+        "Goodbye! Have a great day.",
+        "Thanks for chatting with us. Take care!",
+        "See you later! Feel free to come back if you need anything else."
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "thanks", "thank you", "thanks a lot", "thank you so much", "appreciate it",
+        "that's helpful", "thanks for the help", "great, thanks", "ty"
+      ],
+      "responses": [
+        "You're welcome! Is there anything else I can help you with?",
+        "Happy to help! Let me know if you need anything else.",
+        "Anytime! Have a great day."
+      ]
+    },
+    {
+      "tag": "order_status",
+      "patterns": [
+        "where is my order", "track my order", "order status", "track order",
+        "where's my package", "has my order shipped", "when will my order arrive",
+        "check order status", "i want to track my order", "order tracking",
+        "my order hasn't arrived", "status of my order"
+      ],
+      "responses": [
+        "Sure, I can help with that. Could you please share your order ID (e.g. ORD12345)?",
+        "I'd be happy to check your order status. What's your order number?"
+      ],
+      "context_set": "await_order_id"
+    },
+    {
+      "tag": "cancel_order",
+      "patterns": [
+        "cancel my order", "i want to cancel order", "how do i cancel an order",
+        "cancel order request", "stop my order", "i need to cancel my purchase"
+      ],
+      "responses": [
+        "I can help you cancel your order. Please share your order ID and I'll check if it's eligible for cancellation.",
+        "Orders can be cancelled within 24 hours of purchase if they haven't shipped yet. Could you provide your order ID?"
+      ],
+      "context_set": "await_order_id"
+    },
+    {
+      "tag": "return_policy",
+      "patterns": [
+        "what is your return policy", "how do i return an item", "return policy",
+        "can i return this product", "how many days to return", "return window",
+        "i want to return a product", "return process", "how to return item"
+      ],
+      "responses": [
+        "You can return most items within 30 days of delivery for a full refund, as long as they're unused and in original packaging.",
+        "Our return policy allows returns within 30 days of purchase. Would you like me to start a return request for you?"
+      ]
+    },
+    {
+      "tag": "refund_status",
+      "patterns": [
+        "where is my refund", "refund status", "when will i get my refund",
+        "i haven't received my refund", "refund not processed", "track my refund",
+        "how long does a refund take"
+      ],
+      "responses": [
+        "Refunds are usually processed within 5-7 business days after we receive the returned item. Could you share your order ID so I can check the status?"
+      ],
+      "context_set": "await_order_id"
+    },
+    {
+      "tag": "payment_issue",
+      "patterns": [
+        "my payment failed", "payment not going through", "unable to make payment",
+        "payment declined", "i was charged twice", "double charged", "payment error",
+        "card not working", "issue with payment", "billing issue"
+      ],
+      "responses": [
+        "I'm sorry for the trouble. Payment issues are usually resolved within 24 hours. Could you tell me more about the error message you saw?",
+        "I understand that's frustrating. Could you confirm whether the amount was deducted from your account?"
+      ]
+    },
+    {
+      "tag": "shipping_info",
+      "patterns": [
+        "how long does shipping take", "shipping time", "delivery time",
+        "do you offer free shipping", "shipping cost", "delivery charges",
+        "how much is shipping", "international shipping", "do you ship internationally"
+      ],
+      "responses": [
+        "Standard shipping takes 3-5 business days, and express shipping takes 1-2 business days. Free shipping is available on orders over $50.",
+        "We offer standard (3-5 days) and express (1-2 days) shipping. Shipping costs depend on your location and order weight."
+      ]
+    },
+    {
+      "tag": "product_info",
+      "patterns": [
+        "tell me about this product", "product details", "product specifications",
+        "what are the features", "product information", "specs of the product",
+        "product availability", "is this in stock", "do you have this in stock"
+      ],
+      "responses": [
+        "I can help with product details. Could you share the product name or ID you're asking about?"
+      ]
+    },
+    {
+      "tag": "out_of_stock",
+      "patterns": [
+        "this item is out of stock", "when will it be back in stock", "restock date",
+        "item unavailable", "product not available", "sold out",
+        "why is this product out of stock", "notify me when back in stock"
+      ],
+      "responses": [
+        "I'm sorry, that item is currently out of stock. I can notify you by email as soon as it's restocked, if you'd like."
+      ]
+    },
+    {
+      "tag": "price_inquiry",
+      "patterns": [
+        "how much does it cost", "what is the price", "price of the product",
+        "is there a discount", "any ongoing offers", "do you have coupon codes",
+        "any discount available", "price inquiry"
+      ],
+      "responses": [
+        "Prices vary by product and any active promotions. Could you tell me which product you're interested in?"
+      ]
+    },
+    {
+      "tag": "warranty",
+      "patterns": [
+        "what is the warranty period", "warranty information", "is this covered under warranty",
+        "how do i claim warranty", "product warranty", "warranty claim"
+      ],
+      "responses": [
+        "Most products come with a 1-year manufacturer warranty covering defects. Would you like help filing a warranty claim?"
+      ]
+    },
+    {
+      "tag": "complaint",
+      "patterns": [
+        "i want to file a complaint", "i am not happy with the service", "this is unacceptable",
+        "i received a damaged product", "wrong item delivered", "poor service",
+        "i am very disappointed", "bad experience", "product is defective",
+        "i have a complaint", "this service is terrible", "i am upset about my order",
+        "the product arrived broken", "very poor experience with your company"
+      ],
+      "responses": [
+        "I'm really sorry to hear that. I want to make this right. Could you share your order ID and a brief description of the issue?",
+        "I apologize for the inconvenience caused. Let's get this sorted — could you share more details about what went wrong?"
+      ]
+    },
+    {
+      "tag": "human_agent",
+      "patterns": [
+        "talk to a human", "connect me to an agent", "i want to speak to a representative",
+        "customer service agent", "real person", "human support", "speak to someone",
+        "connect me with support team", "i need a live agent", "transfer me to a human",
+        "can i talk to your manager", "escalate to a human agent"
+      ],
+      "responses": [
+        "Sure, I'm connecting you to a human support agent. Please hold for a moment.",
+        "No problem, I'll escalate this conversation to our support team. Someone will reach out to you shortly."
+      ]
+    },
+    {
+      "tag": "business_hours",
+      "patterns": [
+        "what are your business hours", "when are you open", "working hours",
+        "are you open now", "what time do you close", "opening hours", "office timings",
+        "what time do you open", "are you open on weekends", "when does support open"
+      ],
+      "responses": [
+        "Our support team is available Monday to Saturday, 9 AM to 9 PM. This chatbot, however, is available 24/7!"
+      ]
+    },
+    {
+      "tag": "contact_info",
+      "patterns": [
+        "how can i contact you", "your phone number", "customer support email",
+        "contact details", "how do i reach support", "contact number",
+        "what is your support email", "how do i email support", "give me your helpline number"
+      ],
+      "responses": [
+        "You can reach us at support@example.com or call us at 1-800-555-0199. You can also continue chatting with me!"
+      ]
+    },
+    {
+      "tag": "feedback",
+      "patterns": [
+        "i want to give feedback", "how do i leave a review", "feedback about service",
+        "i have a suggestion", "rate your service"
+      ],
+      "responses": [
+        "We'd love to hear your feedback! You can share it here with me, or leave a review on our website's feedback page."
+      ]
+    },
+    {
+      "tag": "bot_identity",
+      "patterns": [
+        "who are you", "are you a bot", "are you human", "what is your name",
+        "are you a real person", "what can you do", "are you an ai",
+        "what is this chatbot", "tell me about yourself"
+      ],
+      "responses": [
+        "I'm a virtual customer support assistant, here to help with orders, returns, payments, and more!",
+        "I'm an AI-powered chatbot built to help answer your customer service questions quickly."
+      ]
+    },
+    {
+      "tag": "fallback",
+      "patterns": [],
+      "responses": [
+        "I'm sorry, I didn't quite understand that. Could you rephrase your question?",
+        "I'm not sure I follow. You can ask me about orders, returns, refunds, payments, or shipping.",
+        "Hmm, I don't have an answer for that yet. Would you like me to connect you to a human agent?"
+      ]
+    }
+  ]
+}
