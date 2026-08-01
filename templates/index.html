@@ -3,23 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SupportDesk AI — Customer Service Chatbot</title>
+<title>SupportDesk AI — Customer Service Bot & Admin Console</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
   <div class="app-shell">
 
+    <!-- SIDE PANEL -->
     <aside class="side-panel">
       <div class="brand">
         <div class="brand-mark">SD</div>
         <div>
           <h1>SupportDesk<span>AI</span></h1>
-          <p class="tagline">Hybrid NLP + rule-based support assistant</p>
+          <p class="tagline">Hybrid NLP + Rule Support Portal</p>
         </div>
       </div>
 
-      <div class="side-section">
+      <!-- TABS TOGGLE NAVIGATION -->
+      <nav class="nav-tabs">
+        <button id="tab-chat-btn" class="nav-tab active">
+          <span class="nav-tab-icon">💬</span> Chat Assistant
+        </button>
+        <button id="tab-dashboard-btn" class="nav-tab">
+          <span class="nav-tab-icon">📊</span> Admin Console
+        </button>
+      </nav>
+
+      <!-- SUGGESTIONS VIEW (CHAT ONLY) -->
+      <div class="side-section chat-only-element" id="sidebar-suggestions">
         <h2>Try asking about</h2>
         <ul class="suggestion-list" id="suggestion-list">
           <li data-msg="Where is my order ORD12345?">Order status</li>
@@ -31,21 +47,23 @@
         </ul>
       </div>
 
-      <div class="side-section status-block">
+      <!-- STATS SUMMARY VIEW (CHAT ONLY) -->
+      <div class="side-section status-block chat-only-element" id="sidebar-status">
         <h2>Session</h2>
         <div class="status-row"><span>Status</span><strong id="status-dot">● Online</strong></div>
         <div class="status-row"><span>Last intent</span><strong id="last-intent">—</strong></div>
         <div class="status-row"><span>Confidence</span><strong id="last-confidence">—</strong></div>
       </div>
 
-      <p class="footnote">Demo project · No real orders or payments are processed</p>
+      <p class="footnote">Demo project · Intern Portal · Codec Technologies</p>
     </aside>
 
-    <main class="chat-panel">
+    <!-- CHAT ASSISTANT PANEL -->
+    <main class="main-panel chat-panel active" id="chat-panel-view">
       <header class="chat-header">
         <div>
           <h2>Customer Support Chat</h2>
-          <p>Ask about orders, returns, refunds, payments, or shipping</p>
+          <p>Real-time NLP virtual assistant resolving orders, returns, payments, and shipping queries</p>
         </div>
         <button id="reset-btn" class="reset-btn" title="Reset conversation">Reset chat</button>
       </header>
@@ -53,10 +71,9 @@
       <div class="chat-log" id="chat-log">
         <div class="msg bot">
           <div class="avatar">🤖</div>
-          <div class="bubble">
-            Hi! I'm your virtual support assistant. I can help with order tracking, returns,
-            refunds, payments, and shipping questions. What can I help you with today?
-          </div>
+          <div class="bubble">Hi! I'm your virtual support assistant. I can help with order tracking, returns, refunds, payments, and shipping questions. 
+
+Type your message or check out some examples in the side panel. (Try writing with spelling mistakes to test our **typo-correction** engine!)</div>
         </div>
       </div>
 
@@ -69,6 +86,132 @@
         <input type="text" id="user-input" placeholder="Type your message…" autocomplete="off" />
         <button type="submit" id="send-btn">Send</button>
       </form>
+    </main>
+
+    <!-- ADMIN & ANALYTICS DASHBOARD PANEL -->
+    <main class="main-panel dashboard-panel" id="dashboard-panel-view" style="display: none;">
+      <header class="chat-header">
+        <div>
+          <h2>Analytics & Admin Control Center</h2>
+          <p>Real-time system health, conversational logs, NLP model training, and database configuration</p>
+        </div>
+        <button id="refresh-dashboard-btn" class="reset-btn" title="Refresh Dashboard Stats">Refresh Stats</button>
+      </header>
+
+      <div class="dashboard-content">
+        <!-- KPI METRICS ROW -->
+        <div class="metrics-grid">
+          <div class="metric-card metric-messages">
+            <span class="metric-label">Total Messages Handled</span>
+            <span class="metric-value" id="stat-total-messages">0</span>
+          </div>
+          <div class="metric-card metric-sessions">
+            <span class="metric-label">Active Sessions</span>
+            <span class="metric-value" id="stat-total-sessions">0</span>
+          </div>
+          <div class="metric-card metric-fallback">
+            <span class="metric-label">System Fallback Rate</span>
+            <span class="metric-value" id="stat-fallback-rate">0.0%</span>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- INTENTS DISTRIBUTION -->
+          <div class="dash-card">
+            <h3>NLP Intent Frequency & Confidence</h3>
+            <div class="intents-container" id="stat-intents-list">
+              <p class="empty-text">No intent data logged yet.</p>
+            </div>
+          </div>
+
+          <!-- MODEL CONTROL -->
+          <div class="dash-card">
+            <h3>NLP Model Control Panel</h3>
+            <div class="model-controls">
+              <div class="control-row">
+                <span>NLP Engine Status</span>
+                <span class="badge badge-success">Ready</span>
+              </div>
+              <div class="control-row">
+                <span>Confidence Threshold</span>
+                <span class="badge badge-info">0.35</span>
+              </div>
+              <div class="control-row">
+                <span>Core Algorithm</span>
+                <span class="badge">TF-IDF + Logistic Regression</span>
+              </div>
+              <div class="control-row">
+                <span>Typo Tolerance</span>
+                <span class="badge badge-active">Levenshtein Edit Dist.</span>
+              </div>
+              <button id="retrain-btn" class="retrain-action-btn">Retrain NLP Engine</button>
+              <div id="retrain-status" class="retrain-status-text"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- DATABASE MANAGEMENT -->
+          <div class="dash-card db-card">
+            <h3>Mock Orders Database Configuration</h3>
+            <div class="db-editor-container">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Status</th>
+                    <th>Carrier</th>
+                    <th>ETA</th>
+                  </tr>
+                </thead>
+                <tbody id="db-orders-list">
+                  <!-- Dynamic loading -->
+                </tbody>
+              </table>
+              
+              <form id="db-order-form" class="db-form">
+                <h4>Add / Update Mock Order Record</h4>
+                <div class="form-inputs">
+                  <input type="text" id="db-order-id" placeholder="ORD12345" required />
+                  <select id="db-order-status" required>
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                  <input type="text" id="db-order-carrier" placeholder="Carrier (e.g. FedEx)" required />
+                  <input type="text" id="db-order-eta" placeholder="ETA (e.g. 3 business days)" required />
+                  <button type="submit" id="save-order-btn">Save Order</button>
+                </div>
+                <div id="order-form-status" class="form-status-msg"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT CONVERSATIONS LOG -->
+        <div class="dash-card full-width">
+          <h3>Conversation Audits (Latest 15 Logs)</h3>
+          <div class="table-container">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Session</th>
+                  <th>User Query</th>
+                  <th>Predicted Intent</th>
+                  <th>Conf.</th>
+                  <th>Chatbot Response</th>
+                </tr>
+              </thead>
+              <tbody id="conversations-audit-list">
+                <!-- Dynamic loading -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
     </main>
 
   </div>

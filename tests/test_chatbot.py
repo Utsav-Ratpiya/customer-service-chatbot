@@ -17,7 +17,7 @@ import unittest
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from nlp_utils import clean_text, tokenize, extract_order_id, extract_email, preprocess_for_vectorizer
+from nlp_utils import clean_text, tokenize, extract_order_id, extract_email, preprocess_for_vectorizer, spell_correct_word
 from chatbot import ChatbotEngine
 
 
@@ -51,6 +51,11 @@ class TestNlpUtils(unittest.TestCase):
         result = preprocess_for_vectorizer("Where IS my order??")
         self.assertIsInstance(result, str)
         self.assertTrue(len(result) > 0)
+
+    def test_spell_correction(self):
+        self.assertEqual(spell_correct_word("shippng"), "shipping")
+        self.assertEqual(spell_correct_word("refunde"), "refund")
+        self.assertEqual(spell_correct_word("normal"), "normal")
 
 
 class TestChatbotEngine(unittest.TestCase):
@@ -106,6 +111,23 @@ class TestChatbotEngine(unittest.TestCase):
         self.bot.get_response("where is my order", state_a)
         self.assertEqual(state_a["awaiting"], "order_id")
         self.assertIsNone(state_b["awaiting"])
+
+    def test_order_status_slot_filling_cancel(self):
+        reply1, state, meta1 = self.bot.get_response("where is my order", self.state)
+        self.assertEqual(state["awaiting"], "order_id")
+
+        reply2, state, meta2 = self.bot.get_response("nevermind", state)
+        self.assertIsNone(state["awaiting"])
+        self.assertIn("cancelled", reply2.lower())
+
+    def test_order_status_slot_filling_override_with_high_conf_intent(self):
+        reply1, state, meta1 = self.bot.get_response("where is my order", self.state)
+        self.assertEqual(state["awaiting"], "order_id")
+
+        reply2, state, meta2 = self.bot.get_response("what is your return policy", state)
+        self.assertIsNone(state["awaiting"])
+        self.assertEqual(meta2["intent"], "return_policy")
+        self.assertIn("30 days", reply2)
 
 
 if __name__ == "__main__":

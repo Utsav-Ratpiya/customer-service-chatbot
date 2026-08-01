@@ -17,7 +17,7 @@ import sys
 from flask import Flask, render_template, request, jsonify
 
 sys.path.append(os.path.dirname(__file__))
-from chatbot import ChatbotEngine
+from chatbot import ChatbotEngine, load_mock_orders, save_mock_orders
 from analytics import summarize as summarize_logs
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -79,6 +79,47 @@ def analytics():
 @app.route("/api/health")
 def health():
     return jsonify({"status": "ok"})
+
+
+@app.route("/api/orders", methods=["GET"])
+def get_orders():
+    return jsonify(load_mock_orders())
+
+
+@app.route("/api/orders", methods=["POST"])
+def update_orders():
+    payload = request.get_json(force=True, silent=True) or {}
+    order_id = payload.get("order_id")
+    status = payload.get("status")
+    carrier = payload.get("carrier", "-")
+    eta = payload.get("eta", "-")
+    
+    if not order_id or not status:
+        return jsonify({"error": "order_id and status are required"}), 400
+        
+    orders = load_mock_orders()
+    formatted_id = order_id.strip().upper().replace(" ", "")
+    orders[formatted_id] = {
+        "status": status.strip(),
+        "carrier": carrier.strip(),
+        "eta": eta.strip()
+    }
+    save_mock_orders(orders)
+    return jsonify({"status": "success", "orders": orders})
+
+
+@app.route("/api/train", methods=["POST"])
+def train_model_endpoint():
+    try:
+        from train_model import train as run_train
+        from nlp_utils import load_vocabulary
+        run_train()
+        load_vocabulary()
+        global bot
+        bot = ChatbotEngine()
+        return jsonify({"status": "success", "message": "Model retrained and loaded successfully!"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 if __name__ == "__main__":

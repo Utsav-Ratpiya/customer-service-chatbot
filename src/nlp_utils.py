@@ -11,6 +11,8 @@ project runs anywhere with just scikit-learn installed. Implements:
     - a small rule-based suffix stripper (light stemming)
 """
 
+import json
+import os
 import re
 import string
 
@@ -33,6 +35,80 @@ STOPWORDS = {
 # rule-based stemmer. This is not a full Porter stemmer, but it merges
 # common variants like "shipping/shipped/ships" -> "ship" reasonably well.
 _SUFFIXES = ["ing", "edly", "ed", "ly", "ies", "ied", "es", "s"]
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+INTENTS_PATH = os.path.join(BASE_DIR, "data", "intents.json")
+
+# A set of known words extracted from the training data patterns
+VOCABULARY = set()
+
+def levenshtein_distance(s1: str, s2: str) -> int:
+    if len(s1) < len(s2):
+        return levenshtein_distance(s2, s1)
+    if len(s2) == 0:
+        return len(s1)
+    
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = previous_row[j + 1] + 1
+            deletions = current_row[j] + 1
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+        
+    return previous_row[-1]
+
+def load_vocabulary():
+    global VOCABULARY
+    VOCABULARY.clear()
+    if not os.path.exists(INTENTS_PATH):
+        return
+    try:
+        with open(INTENTS_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            for intent in data.get("intents", []):
+                for pattern in intent.get("patterns", []):
+                    pat_clean = pattern.lower().strip()
+                    pat_clean = re.sub(r"[^a-z0-9\s]", " ", pat_clean)
+                    for word in pat_clean.split():
+                        if len(word) > 2 and word not in STOPWORDS:
+                            VOCABULARY.add(word)
+    except Exception:
+        pass
+
+# Initialize vocabulary
+load_vocabulary()
+
+def spell_correct_word(word: str) -> str:
+    """Correct simple typos in a word by matching it to the closest word in VOCABULARY."""
+    if not VOCABULARY or word in VOCABULARY or len(word) <= 3 or word.isdigit():
+        return word
+        
+    # Check for words with edit distance 1
+    for vocab_word in VOCABULARY:
+        if abs(len(vocab_word) - len(word)) > 1:
+            continue
+        if levenshtein_distance(word, vocab_word) == 1:
+            return vocab_word
+            
+    # Check for words with edit distance 2 for longer words
+    if len(word) > 5:
+        best_word = None
+        best_dist = 99
+        for vocab_word in VOCABULARY:
+            if abs(len(vocab_word) - len(word)) > 2:
+                continue
+            dist = levenshtein_distance(word, vocab_word)
+            if dist == 2 and dist < best_dist:
+                best_word = vocab_word
+                best_dist = dist
+        if best_word:
+            return best_word
+            
+    return word
+
 
 
 def clean_text(text: str) -> str:
@@ -71,6 +147,8 @@ def tokenize(text: str, remove_stopwords: bool = True, stem: bool = True):
     """Turn raw text into a list of normalized tokens."""
     cleaned = clean_text(text)
     tokens = cleaned.split()
+    # Correct spelling typos
+    tokens = [spell_correct_word(t) for t in tokens]
     if remove_stopwords:
         tokens = [t for t in tokens if t not in STOPWORDS]
     if stem:

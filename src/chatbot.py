@@ -43,14 +43,34 @@ CONFIDENCE_THRESHOLD = float(os.environ.get("CONFIDENCE_THRESHOLD", 0.35))
 # Intents that require an order ID before the bot can respond meaningfully.
 ORDER_ID_INTENTS = {"order_status", "cancel_order", "refund_status"}
 
-# A tiny mock "database" so the demo produces believable, varied answers
-# without needing a real backend. Swap this for a real order-service call
-# in production.
-MOCK_ORDER_DB = {
-    "ORD12345": {"status": "Shipped", "eta": "2 business days", "carrier": "BlueDart"},
-    "ORD67890": {"status": "Processing", "eta": "not yet dispatched", "carrier": "-"},
-    "ORD11111": {"status": "Delivered", "eta": "delivered on 2026-07-20", "carrier": "FedEx"},
-}
+# A tiny mock "database" path so the demo produces believable, varied answers
+# without needing a real backend.
+MOCK_ORDER_DB_PATH = os.path.join(BASE_DIR, "data", "mock_orders.json")
+
+def load_mock_orders():
+    if not os.path.exists(MOCK_ORDER_DB_PATH):
+        defaults = {
+            "ORD12345": {"status": "Shipped", "eta": "2 business days", "carrier": "BlueDart"},
+            "ORD67890": {"status": "Processing", "eta": "not yet dispatched", "carrier": "-"},
+            "ORD11111": {"status": "Delivered", "eta": "delivered on 2026-07-20", "carrier": "FedEx"}
+        }
+        os.makedirs(os.path.dirname(MOCK_ORDER_DB_PATH), exist_ok=True)
+        with open(MOCK_ORDER_DB_PATH, "w", encoding="utf-8") as f:
+            json.dump(defaults, f, indent=2)
+        return defaults
+    try:
+        with open(MOCK_ORDER_DB_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def save_mock_orders(orders):
+    try:
+        os.makedirs(os.path.dirname(MOCK_ORDER_DB_PATH), exist_ok=True)
+        with open(MOCK_ORDER_DB_PATH, "w", encoding="utf-8") as f:
+            json.dump(orders, f, indent=2)
+    except Exception:
+        pass
 
 
 class ChatbotEngine:
@@ -90,11 +110,31 @@ class ChatbotEngine:
 
         # --- 1. RULE LAYER: are we mid-conversation, waiting on a slot? ---
         if session_state.get("awaiting") == "order_id":
-            order_id = extract_order_id(message)
-            reply = self._handle_order_id_followup(order_id, session_state)
-            session_state["awaiting"] = None
-            self._log(message, "slot_filling:order_id", 1.0, reply, session_state)
-            return reply, session_state, {"intent": "slot_filling", "confidence": 1.0}
+            normalized_message = message.lower().strip()
+            if normalized_message in ["cancel", "stop", "nevermind", "exit", "go back", "quit"]:
+                session_state["awaiting"] = None
+                reply = "No problem! I've cancelled the order lookup. What else can I help you with?"
+                self._log(message, "cancel_slot_filling", 1.0, reply, session_state)
+                return reply, session_state, {"intent": "greeting", "confidence": 1.0}
+            
+            # Smart check: if they typed something else that maps to a high-confidence non-order intent, override!
+            cleaned = preprocess_for_vectorizer(message)
+            probs = self.model.predict_proba([cleaned])[0]
+            classes = self.model.classes_
+            best_idx = probs.argmax()
+            intent = classes[best_idx]
+            confidence = float(probs[best_idx])
+            
+            if confidence >= 0.75 and intent not in ORDER_ID_INTENTS:
+                session_state["awaiting"] = None
+                # Fall through to the normal classification flow below
+            else:
+                order_id = extract_order_id(message)
+                reply = self._handle_order_id_followup(order_id, session_state)
+                if order_id and "couldn't find" not in reply.lower():
+                    session_state["awaiting"] = None
+                self._log(message, "slot_filling:order_id", 1.0, reply, session_state)
+                return reply, session_state, {"intent": "slot_filling", "confidence": 1.0}
 
         # --- 2. NLP LAYER: classify intent ---
         cleaned = preprocess_for_vectorizer(message)
@@ -137,13 +177,16 @@ class ChatbotEngine:
             return ("I couldn't find a valid order ID in that message. "
                     "It usually looks like ORD12345 — could you double check and resend it?")
 
-        order = MOCK_ORDER_DB.get(order_id.replace("ORDER", "ORD"))
+        orders = load_mock_orders()
+        order = orders.get(order_id.replace("ORDER", "ORD"))
         if not order:
             return (f"I couldn't find any order with ID {order_id} in our system. "
                      "Could you double-check the ID, or would you like me to connect you to an agent?")
 
         if intent == "cancel_order":
             if order["status"] == "Processing":
+                order["status"] = "Cancelled"
+                save_mock_orders(orders)
                 return (f"Order {order_id} is still processing, so it's eligible for cancellation. "
                          "I've submitted the cancellation request — you'll get a confirmation email shortly.")
             else:

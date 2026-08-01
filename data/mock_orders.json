@@ -1,0 +1,17 @@
+{
+  "ORD12345": {
+    "status": "Shipped",
+    "eta": "2 business days",
+    "carrier": "BlueDart"
+  },
+  "ORD67890": {
+    "status": "Processing",
+    "eta": "not yet dispatched",
+    "carrier": "-"
+  },
+  "ORD11111": {
+    "status": "Delivered",
+    "eta": "delivered on 2026-07-20",
+    "carrier": "FedEx"
+  }
+}

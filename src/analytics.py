@@ -81,12 +81,24 @@ def summarize(rows=None):
     ) * 0  # slot-filling isn't a fallback, kept explicit for clarity
     fallback_rate = round(fallback_count / len(rows), 3) if rows else 0.0
 
+    recent = []
+    for r in reversed(rows[-15:]):
+        recent.append({
+            "timestamp": r.get("timestamp"),
+            "session_id": r.get("session_id", "")[:8] + "..." if r.get("session_id") else "unknown",
+            "message": r.get("message"),
+            "predicted_intent": r.get("predicted_intent"),
+            "confidence": r.get("confidence"),
+            "reply": r.get("reply")
+        })
+
     return {
         "total_messages": len(rows),
         "total_sessions": len(sessions),
         "intent_counts": dict(intent_counts.most_common()),
         "avg_confidence_by_intent": avg_confidence,
         "fallback_rate": fallback_rate,
+        "recent_logs": recent,
     }
 
 

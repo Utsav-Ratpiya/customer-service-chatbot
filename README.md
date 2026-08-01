@@ -9,6 +9,29 @@ Unlike a purely rule-based bot (rigid, keyword-only) or a purely ML bot (a black
 reliably act on real data), this project uses the hybrid pattern many real support bots use in
 production: **ML for language understanding, rules for anything that touches real business data.**
 
+## Demo & Screenshots
+
+Here are the screenshots and video demonstrations of the SupportDesk AI system:
+
+### 💬 Chat Assistant Interfaces
+*   **Initial Chat Interface & Greeting**:
+    ![Chatbot Initial View](output/chatbot.png)
+
+*   **Chat Conversation & Response**:
+    ![Chat Response View](output/chat_response.png)
+
+### 📊 Admin Analytics & Control Dashboard
+*   **Analytics KPIs & Intents Frequency Dashboard**:
+    ![Admin Console View 1](output/admin_console1.png)
+
+*   **Mock Orders Database Configurator & Activity Audits**:
+    ![Admin Console View 2](output/admin_console2.png)
+
+### 🎥 Project Walkthrough Video
+Watch the step-by-step video demonstration showing intent classification, typo-correction, slot-filling cancellation, dynamic DB editing, and model retraining in action:
+
+[👉 Click to Watch the Chatbot Demo Video](output/chatbot%20demo.mp4)
+
 ---
 
 ## Features
